@@ -2,47 +2,47 @@ module Index
 
 open Elmish
 open Fable.Remoting.Client
-open Shared
+open SavingsTracker
 
 type Model =
-    { Todos: Todo list
+    { FinancialModels: FinancialModel list
       Input: string
       Priority : int option }
 
 type Msg =
-    | GotTodos of Todo list
+    | GotModels of FinancialModel list
     | SetInput of string
     | SetPriority of int
-    | AddTodo
-    | AddedTodo of Todo
+    | AddModel
+    | AddedModel of FinancialModel
 
-let todosApi =
+let modelsApi =
     Remoting.createApi()
     |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.buildProxy<ITodosApi>
+    |> Remoting.buildProxy<IModelApi>
 
 let init(): Model * Cmd<Msg> =
     let model =
-        { Todos = []
+        { FinancialModels = []
           Input = ""
           Priority = None }
-    let cmd = Cmd.OfAsync.perform todosApi.getTodos () GotTodos
+    let cmd = Cmd.OfAsync.perform modelsApi.GetModels () GotModels
     model, cmd
 
-let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
+let update (msg: Msg) (appModel: Model): Model * Cmd<Msg> =
     match msg with
-    | GotTodos todos ->
-        { model with Todos = todos }, Cmd.none
+    | GotModels models ->
+        { appModel with FinancialModels = models }, Cmd.none
     | SetInput value ->
-        { model with Input = value }, Cmd.none
+        { appModel with Input = value }, Cmd.none
     | SetPriority value ->
-        { model with Priority = Some value }, Cmd.none
-    | AddTodo ->
-        let todo = Todo.create model.Input model.Priority.Value
-        let cmd = Cmd.OfAsync.perform todosApi.addTodo todo AddedTodo
-        { model with Input = ""; Priority = None }, cmd
-    | AddedTodo todo ->
-        { model with Todos = model.Todos @ [ todo ] |> List.sortBy (fun x -> x.Priority)}, Cmd.none
+        { appModel with Priority = Some value }, Cmd.none
+    | AddModel ->
+        let model = FinancialModel.create appModel.Input appModel.Priority.Value
+        let cmd = Cmd.OfAsync.perform modelsApi.AddModel model AddedModel
+        { appModel with Input = ""; Priority = None }, cmd
+    | AddedModel model ->
+        { appModel with FinancialModels = appModel.FinancialModels @ [ model ] }, Cmd.none
 
 open Fable.React
 open Fable.React.Props
@@ -65,8 +65,8 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
     Box.box' [ ] [
         Content.content [ ] [
             Content.Ol.ol [ ] [
-                for todo in model.Todos do
-                    li [ ] [ str todo.Description ; str " " ; str <| sprintf "(%d)" todo.Priority ]
+                for model in model.FinancialModels do
+                    li [ ] [ str model.Description ]
             ]
         ]
         Field.div [ Field.IsGrouped ] [
@@ -85,8 +85,8 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
             Control.p [ ] [
                 Button.a [
                     Button.Color IsPrimary
-                    Button.Disabled (Todo.isValid model.Input |> not)
-                    Button.OnClick (fun _ -> dispatch AddTodo)
+                    Button.Disabled (FinancialModel.isValid model.Input |> not)
+                    Button.OnClick (fun _ -> dispatch AddModel)
                 ] [
                     str "Add"
                 ]

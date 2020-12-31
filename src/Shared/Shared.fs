@@ -1,25 +1,12 @@
-namespace Shared
+namespace SavingsTracker
 
 open System
 
-type Todo =
-    { Id : Guid
-      Description : string
-      Priority : int }
+type IModelApi =
+    { GetModels : unit -> Async<FinancialModel list>
+      AddModel : FinancialModel -> Async<FinancialModel> }
 
-module Todo =
-    let isValid (description: string) =
-        String.IsNullOrWhiteSpace description |> not
-
-    let create (description: string) (priority : int) =
-        { Id = Guid.NewGuid()
-          Description = description
-          Priority = priority }
-
+[<RequireQualifiedAccess>]
 module Route =
     let builder typeName methodName =
         sprintf "/api/%s/%s" typeName methodName
-
-type ITodosApi =
-    { getTodos : unit -> Async<Todo list>
-      addTodo : Todo -> Async<Todo> }

@@ -9,3 +9,4 @@ vscode:
   extensions:
     - ms-dotnettools.csharp@1.23.8:iO8KaJulQm9UBFXlmZNiog==
     - ionide.ionide-fsharp@5.1.0:p/YohvQ0Y0nyskT2GD2b3g==
+    - msjsdiag.debugger-for-chrome@4.12.6:IdQBlCQEnixzHAOkHC36ew==
