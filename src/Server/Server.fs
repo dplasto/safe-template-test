@@ -20,12 +20,12 @@ type Storage () =
 
 let storage = Storage()
 
-storage.AddTodo(Todo.create "Create new SAFE project") |> ignore
-storage.AddTodo(Todo.create "Write your app") |> ignore
-storage.AddTodo(Todo.create "Ship it !!!") |> ignore
+storage.AddTodo(Todo.create "Create new SAFE project" 1) |> ignore
+storage.AddTodo(Todo.create "Write your app" 2) |> ignore
+storage.AddTodo(Todo.create "Ship it !!!" 3) |> ignore
 
 let todosApi =
-    { getTodos = fun () -> async { return storage.GetTodos() }
+    { getTodos = fun () -> async { return storage.GetTodos() |> List.sortBy (fun x -> x.Priority) }
       addTodo =
         fun todo -> async {
             match storage.AddTodo todo with

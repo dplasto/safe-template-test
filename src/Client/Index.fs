@@ -6,11 +6,13 @@ open Shared
 
 type Model =
     { Todos: Todo list
-      Input: string }
+      Input: string
+      Priority : int option }
 
 type Msg =
     | GotTodos of Todo list
     | SetInput of string
+    | SetPriority of int
     | AddTodo
     | AddedTodo of Todo
 
@@ -22,7 +24,8 @@ let todosApi =
 let init(): Model * Cmd<Msg> =
     let model =
         { Todos = []
-          Input = "" }
+          Input = ""
+          Priority = None }
     let cmd = Cmd.OfAsync.perform todosApi.getTodos () GotTodos
     model, cmd
 
@@ -32,12 +35,14 @@ let update (msg: Msg) (model: Model): Model * Cmd<Msg> =
         { model with Todos = todos }, Cmd.none
     | SetInput value ->
         { model with Input = value }, Cmd.none
+    | SetPriority value ->
+        { model with Priority = Some value }, Cmd.none
     | AddTodo ->
-        let todo = Todo.create model.Input
+        let todo = Todo.create model.Input model.Priority.Value
         let cmd = Cmd.OfAsync.perform todosApi.addTodo todo AddedTodo
-        { model with Input = "" }, cmd
+        { model with Input = ""; Priority = None }, cmd
     | AddedTodo todo ->
-        { model with Todos = model.Todos @ [ todo ] }, Cmd.none
+        { model with Todos = model.Todos @ [ todo ] |> List.sortBy (fun x -> x.Priority)}, Cmd.none
 
 open Fable.React
 open Fable.React.Props
@@ -61,7 +66,7 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
         Content.content [ ] [
             Content.Ol.ol [ ] [
                 for todo in model.Todos do
-                    li [ ] [ str todo.Description ]
+                    li [ ] [ str todo.Description ; str " " ; str <| sprintf "(%d)" todo.Priority ]
             ]
         ]
         Field.div [ Field.IsGrouped ] [
@@ -70,6 +75,12 @@ let containerBox (model : Model) (dispatch : Msg -> unit) =
                   Input.Value model.Input
                   Input.Placeholder "What needs to be done?"
                   Input.OnChange (fun x -> SetInput x.Value |> dispatch) ]
+            ]
+            Control.p [ Control.IsExpanded ] [
+                Input.number [
+                  Input.Value (match model.Priority with | Some x -> string x | None -> "")
+                  Input.Placeholder "Priority?"
+                  Input.OnChange (fun x -> SetPriority (int x.Value) |> dispatch) ]
             ]
             Control.p [ ] [
                 Button.a [

@@ -4,15 +4,17 @@ open System
 
 type Todo =
     { Id : Guid
-      Description : string }
+      Description : string
+      Priority : int }
 
 module Todo =
     let isValid (description: string) =
         String.IsNullOrWhiteSpace description |> not
 
-    let create (description: string) =
+    let create (description: string) (priority : int) =
         { Id = Guid.NewGuid()
-          Description = description }
+          Description = description
+          Priority = priority }
 
 module Route =
     let builder typeName methodName =
