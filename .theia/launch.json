@@ -7,12 +7,13 @@
           "name": ".NET Core Launch (console)",
           "type": "coreclr",
           "request": "launch",
-          "preLaunchTask": "build",
+          "preLaunchTask": "dotnet fake build",
           "program": "${workspaceFolder}/src/Server/bin/Debug/netcoreapp3.1/Server.dll",
           "args": [],
           "cwd": "${workspaceFolder}",
           "stopAtEntry": false,
-          "console": "internalConsole"
+          "console": "internalConsole",
+          "logging": {"programOutput": true}
       }
   ]
 }

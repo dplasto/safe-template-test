@@ -6,9 +6,12 @@ open Saturn
 open SavingsTracker
 
 type Storage () =
-    let models = ResizeArray<FinancialModel>()
+    let models =
+        printfn "Create models"
+        ResizeArray<FinancialModel>()
 
     member __.GetModels () =
+        printfn "GetModels"
         List.ofSeq models
 
     member __.AddModel (model: FinancialModel) =
