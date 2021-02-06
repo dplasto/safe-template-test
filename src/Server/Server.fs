@@ -11,11 +11,15 @@ type Storage () =
         ResizeArray<FinancialModel>()
 
     member __.GetModels () =
-        printfn "GetModels"
-        List.ofSeq models
+        printfn "GetModels start"
+        let result = List.ofSeq models
+        printfn "GetModels end"
+        result
 
     member __.AddModel (model: FinancialModel) =
+        printfn "AddModel start"
         models.Add model
+        printfn "AddModel end"
         Ok ()
 
 let storage = Storage()
@@ -30,7 +34,7 @@ let modelsApi =
         fun model -> async {
             match storage.AddModel model with
             | Ok () -> return model
-            | Error e -> return failwith e
+            | Error e -> return model
         } }
 
 let webApp =
