@@ -126,7 +126,7 @@ module FinancialModel =
 
         let model =
             {
-                Description = "Test"
+                Description = description
                 SavingsPots = [ account, 100.0 ]
                 Transactions = []
                 InflationRate = 0.0

@@ -39,8 +39,8 @@ let update (msg: Msg) (appModel: Model): Model * Cmd<Msg> =
         { appModel with Priority = Some value }, Cmd.none
     | AddModel ->
         let model = FinancialModel.create appModel.Input appModel.Priority.Value
-        //let cmd = Cmd.OfAsync.perform modelsApi.AddModel model AddedModel
-        { appModel with Input = ""; Priority = None }, Cmd.none
+        let cmd = Cmd.OfAsync.perform modelsApi.AddModel model AddedModel
+        { appModel with Input = ""; Priority = None }, cmd
     | AddedModel model ->
         { appModel with FinancialModels = appModel.FinancialModels @ [ model ] }, Cmd.none
 
