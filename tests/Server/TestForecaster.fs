@@ -1,11 +1,12 @@
-module SavingsTracker.Test
+namespace TestForecaster
 
 open Expecto
+open SavingsTracker
 
 [<RequireQualifiedAccess>]
 module TestForecaster =
 
-    let ``Simple test`` () =
+    let simpleTest () =
 
         let account =
             {
@@ -30,12 +31,11 @@ module TestForecaster =
             |> List.exactlyOne
             |> (fun (_, _, x) -> x)
 
-        Expect.floatClose Accuracy.low result 110.47
+        Expect.floatClose Accuracy.low result 110.47 "asdfasdf"
 
 
     // https://www.calculatorsoup.com/calculators/financial/investment-inflation-calculator.php
-
-    let ``Simple compound interest`` () =
+    let simpleCompoundInterest () =
 
         let account =
             {
@@ -142,3 +142,8 @@ module TestForecaster =
     //     |> List.exactlyOne
     //     |> (fun (_, _, x) -> x)
     //     |> should (equalWithin 0.1) 95.24
+
+    let server = testList "Forecaster" [
+        testCase "Simple test" simpleTest
+        testCase "Simple test" simpleTest
+    ]

@@ -6,10 +6,7 @@ open Shared
 open Server
 
 let server = testList "Server" [
-    testCase "Adding valid Todo" <| fun _ ->
-        let expected = false
-        let actual = false
-        Expect.equal actual expected "Should be false"
+    testCase "Simple test" TestForecaster.TestForecaster.simpleTest
 ]
 
 let all =
@@ -20,4 +17,5 @@ let all =
         ]
 
 [<EntryPoint>]
-let main _ = runTests defaultConfig all
+let main _ =
+    runTests defaultConfig all
