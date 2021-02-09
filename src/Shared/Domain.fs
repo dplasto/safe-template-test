@@ -3,18 +3,14 @@ namespace SavingsTracker
 open System
 
 type GrowthModel =
-    | EffectiveAnnualReturn of float seq
-    | AnnualInterestRateCompoundingMonthly of float seq
+    | EffectiveAnnualReturn of float // TODO add support for return rate changing over time. bad years, etc.
+    | AnnualInterestRateCompoundingMonthly of float
 
 [<RequireQualifiedAccess>]
 module GrowthModel =
 
     let zero =
-        Seq.initInfinite (fun _ -> 0.0)
-        |> AnnualInterestRateCompoundingMonthly
-
-    let fix x =
-        Seq.initInfinite (fun _ -> x)
+        0.0 |> AnnualInterestRateCompoundingMonthly
 
 type SavingsPot =
     {
@@ -66,17 +62,11 @@ module Amount =
     let calculateReturn (year : int) (growthModel : GrowthModel) (inflationRate : float) (amount : float) : float =
 
         match growthModel with
-        | EffectiveAnnualReturn rates ->
+        | EffectiveAnnualReturn rate ->
             // TODO test this
-            let rate =
-                rates
-                |> Seq.item year
             let r = rate - inflationRate
             (1.0 + (r/12.0))**12.0 - 1.0 // https://global.oup.com/us/companion.websites/9780190296902/sr/interactive/formulas/nominal/
-        | AnnualInterestRateCompoundingMonthly rates ->
-            let rate =
-                rates
-                |> Seq.item year
+        | AnnualInterestRateCompoundingMonthly rate ->
             amount * (1.0 + ((rate - inflationRate) / 12.0))
 
 
@@ -120,7 +110,7 @@ module FinancialModel =
         let account =
             {
                 Name = "Test"
-                Growth = AnnualInterestRateCompoundingMonthly <| GrowthModel.fix 0.1
+                Growth = AnnualInterestRateCompoundingMonthly <| 0.1
                 TaxRate = 0.0
             }
 
