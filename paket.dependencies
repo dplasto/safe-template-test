@@ -3,6 +3,9 @@ framework: netcoreapp3.1
 storage: none
 
 nuget Fable.Remoting.Giraffe
+nuget Feliz
+nuget Feliz.Plotly
+nuget Feliz.Recharts
 nuget Saturn
 nuget Expecto
 
