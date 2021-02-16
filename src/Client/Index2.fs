@@ -1,32 +1,43 @@
 module Index2
 
 open Feliz
+open Feliz.Bulma
 open Elmish
+open SavingsTracker
 
-type State = { Count: int }
+type State = {
+    FinancialModel : FinancialModel
+}
 
 type Msg =
-    | Increment
-    | Decrement
+    | AddAccount
 
-let init() = { Count = 0 }, Cmd.none
+let init() = { FinancialModel = FinancialModel.create "test" 0 }, Cmd.none
 
 let update (msg: Msg) (state: State) =
     match msg with
-    | Increment -> { state with Count = state.Count + 1 }, Cmd.none
-    | Decrement -> { state with Count = state.Count - 1 }, Cmd.none
+    | AddAccount -> state, Cmd.none
 
 let render (state: State) (dispatch: Msg -> unit) =
     Html.div [
         Html.button [
-            prop.onClick (fun _ -> dispatch Increment)
-            prop.text "Increment"
+            prop.onClick (fun _ -> dispatch AddAccount)
+            prop.text "Add account"
         ]
 
-        Html.button [
-            prop.onClick (fun _ -> dispatch Decrement)
-            prop.text "Decrement"
+        Html.textf [
+            prop.onKeyUp (fun _ -> dispatch)
         ]
 
-        Html.h1 state.Count
+        Feliz.React.
+
+        Html.h1 state.FinancialModel.Description
+
+        Html.div [
+            prop.className "content"
+            prop.children [
+                Chart.chart ()
+            ]
+        ]
+
     ]
